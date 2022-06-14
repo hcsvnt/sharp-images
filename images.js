@@ -47,6 +47,8 @@ async function optimizeJPG(file) {
         },
         outputDir: outputDir,
         filenameFormat: (id, src, width, format) => {
+            if (format.toLocaleLowerCase() === 'jpeg') return `${parse(file).name}.jpg`
+            // override the default '.jpeg' file extension
             return `${parse(file).name}.${format}`
             // [original file name] . [file format]
         },
