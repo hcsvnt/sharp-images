@@ -20,26 +20,27 @@ async function optimizePNG(filePath) {
     })
 }
 
+
 let currentPath = inputDir;
-let currentOutputPath = outputDir
-// filePath
+let currentOutputPath = outputDir;
+
+
 async function iterateRecursively(dir) {
     let entries = await readdir(dir, { withFileTypes: true });
-    console.log('entries:', entries)
+    console.log('entries:', entries);
     entries.forEach(entry => {
         if (!entry.isDirectory()) {
             const fileExtension = parse(entry.name).ext.toLowerCase();
-            console.log('file:', entry.name, 'ext:', fileExtension)
+            console.log('file:', entry.name, 'ext:', fileExtension);
 
             if (fileExtension === '.png') optimizePNG(currentPath + entry.name);
         } else {
-            if (!fs.existsSync(`${outputDir}/${entry.name}`)) fs.mkdirSync(`${outputDir}/${entry.name}`);
+            if (!fs.existsSync(`${currentOutputPath}/${entry.name}`)) fs.mkdirSync(`${currentOutputPath}/${entry.name}`);
             console.log('i am a folder:', entry);
             currentPath += `${entry.name}/`;
             currentOutputPath += `${entry.name}/`;
             console.log('the new current path:', currentPath);
-            // iterateRecursively(`${inputDir}/${entry.name}`)
-            iterateRecursively(currentPath)
+            iterateRecursively(currentPath);
         }
     })
 }
