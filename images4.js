@@ -32,47 +32,59 @@ const getPaths = (dirPath, imagePaths) => {
 }
 
 
-async function JPG(filePath) {
-
-    const outputPath = filePath.replace(inputDir, outputDir);
-
-    // try {
-    //     await sharp(filePath)
-    //         .jpeg({ mozjpeg: true })
-    //         .toFile(outputPath, (error, info) => console.log(info))
-    // } catch (error) {
-    //     console.log(error);
-    // }
-
-    await sharp(filePath)
-        .jpeg({ mozjpeg: true })
+const jpg = (filePath, outputPath) => {
+    sharp(filePath)
+        .jpeg({
+            mozjpeg: true,
+            quality: 60,
+        })
         .toFile(outputPath, (error, info) => console.log(info))
-    await sharp(filePath)
+}
+
+const png = (filePath, outputPath) => {
+    sharp(filePath)
+        .png({
+            quality: 60,
+            compressionLevel: 9,
+            effort: 10,
+        })
+        .toFile(outputPath, (error, info) => console.log(info))
+}
+
+const webp = (filePath, format, outputPath) => {
+    sharp(filePath)
         .toFormat('webp')
-        .webp({ })
-        .toFile(outputPath.replace('jpg', 'webp'), (error, info) => console.log(info))
+        .webp({
+            quality: 70,
+        })
+        .toFile(outputPath.replace(format, 'webp'), (error, info) => console.log(info))
+}
+
+const avif = (filePath, format, outputPath) => {
+    sharp(filePath)
+        .toFormat('avif')
+        .avif({
+            quality: 60,
+            chromaSubsampling: '4:2:0',
+            effort: 7
+        })
+        .toFile(outputPath.replace(format, 'avif'), (error, info) => console.log(info))
 }
 
 
-async function PNG(filePath) {
-
+function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
+    jpg(filePath, outputPath);
+    webp(filePath, 'jpg', outputPath);
+    avif(filePath, 'jpg', outputPath);
+}
 
-    // try {
-    //     await sharp(filePath)
-    //         .png({ })
-    //         .toFile(outputPath, (error, info) => console.log(info))
-    // } catch (error) {
-    //     console.log(error);
-    // }
 
-    await sharp(filePath)
-        .png({ })
-        .toFile(outputPath, (error, info) => console.log(info))
-    await sharp(filePath)
-        .toFormat('webp')
-        .webp({ })
-        .toFile(outputPath.replace('png', 'webp'), (error, info) => console.log(info))
+function runPNG(filePath) {
+    const outputPath = filePath.replace(inputDir, outputDir);
+    png(filePath, outputPath);
+    webp(filePath, 'png', outputPath);
+    avif(filePath, 'png', outputPath);
 }
 
 
@@ -86,9 +98,9 @@ async function processImages(filePaths) {
         console.log('extension:', extension);
 
         if (extension === '.jpg') {
-            JPG(filePath);
+            runJPG(filePath);
         } else {
-            PNG(filePath);
+            runPNG(filePath);
         }
     })
 }
