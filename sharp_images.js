@@ -1,6 +1,7 @@
 const sharp = require('sharp');
 const { readdirSync, statSync, mkdirSync, existsSync } = require('fs');
 const { join, basename, extname, relative, dirname, sep } = require('path')
+
 const inputDir = 'input';
 const outputDir = 'output';
 const possibleFormats = ['.jpg', '.jpeg', '.png']
@@ -8,6 +9,7 @@ const outputs = Object.freeze({
   jpeg: ['jpg', 'webp', 'avif'],
   png: ['png', 'webp', 'avif']
 });
+
 
 function inspectFile(file) {
   const extName = extname(file);
