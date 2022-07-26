@@ -1,10 +1,10 @@
 const sharp = require('sharp');
 const fs = require('fs');
-const path = require('path')
-const { parse } = require('path')
+const path = require('path');
+const { parse } = require('path');
+
 const inputDir = './input';
 const outputDir = './output';
-
 const acceptedFormats = ['.jpg', '.png'];
 
 
