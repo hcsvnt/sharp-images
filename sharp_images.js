@@ -62,31 +62,39 @@ async function handleImage(inputPath) {
   outputsByExtType.forEach(async (ext) => {
   const imageOutputPath = __dirname + '/' + finalDirName + '/' + imageBaseName + '.' + ext;
   
-  await sharp(inputPath)
-    .toFormat(outputType)
-    .jpeg({ 
-        mozjpeg: true,
+
+  try {
+    await sharp(inputPath)
+      .toFormat(outputType)
+      .jpeg({ 
+          mozjpeg: true,
+          quality: 60,
+      })
+      .png({
         quality: 60,
-    })
-    .png({
-      quality: 60,
-      compressionLevel: 9,
-      effort: 10,
-    })
-    .webp({
-      quality: 70,
-    })
-    .avif({
-      quality: 60,
-      chromaSubsampling: '4:2:0',
-      effort: 6
-    })
-    .toFile(imageOutputPath, (err, info) => {
-      if (err) {
-        console.error({err})
-      }
-    });
+        compressionLevel: 9,
+        effort: 10,
+      })
+      .webp({
+        quality: 70,
+      })
+      .avif({
+        quality: 60,
+        chromaSubsampling: '4:2:0',
+        effort: 6
+      })
+      .toFile(imageOutputPath, (err, info) => {
+        if (err) {
+          console.error({err})
+        }
+      });
+  } catch(e) {
+    console.error(e)
+  }
+
+
   })
+  
 }
 
 const allFiles = getAllImageFiles('./' + inputDir);
