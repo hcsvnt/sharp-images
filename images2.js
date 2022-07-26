@@ -24,32 +24,34 @@ async function JPG(inputPath, outputPath) {
 }
 
 
-let currentPath = inputDir;
+// let currentPath = inputDir;
+const pathsToProcess = [];
 
 
 async function findPaths(dir) {
-    console.log('dir to scan', dir)
+    console.log('dir to scan', dir);
+
     let entries = await readdir(dir, { withFileTypes: true });
 
-    // const paths = entries.map(entry => dir + parse(entry.name).base);
-    // console.log(paths);
-    const paths = [];
 
     entries.forEach(entry => {
         if (!entry.isDirectory()) {
-            paths.push(dir + '/' + parse(entry.name).base);
+            pathsToProcess.push(dir + '/' + parse(entry.name).base);
         } else {
-            currentPath += `/${entry.name}`;
-            findPaths(currentPath);
+
+            return new Promise(resolve => resolve(findPaths(dir + `/${entry.name}`)))
         }
     });
-    return paths;
+
+    // console.log(pathsToProcess)
 }
 
 
-async function imagesSharp(path) {
-    const pathsToProcess = await findPaths(path);
-    console.log(pathsToProcess)
+async function imagesSharp(dir) {
+    await findPaths(dir)
+    .then(() => {
+        console.log(pathsToProcess)
+    })
 }
 
 imagesSharp(inputDir);
