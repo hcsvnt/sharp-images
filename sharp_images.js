@@ -1,17 +1,25 @@
 const sharp = require('sharp');
 const { readdirSync, statSync } = require('fs');
-const { join, basename } = require('path')
+const { join, basename, extname } = require('path')
 const inputDir = './input';
 const outputDir = '/output';
+const possibleFormats = ['.jpg', '.jpeg', '.png', '.webp', '.avif']
 
-function getAllFiles(dirPath, arrayOfFiles) {
+function isImage(file) {
+  return possibleFormats.includes(extname(file))
+}
+
+function getAllImageFiles(dirPath, arrayOfFiles) {
   files = readdirSync(dirPath)
   arrayOfFiles = arrayOfFiles || [];
 
   files.forEach(function(file) {
     if (statSync(dirPath + "/" + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + "/" + file, arrayOfFiles);
+      arrayOfFiles = getAllImageFiles(dirPath + "/" + file, arrayOfFiles);
     } else {
+      if (!isImage(file)) {
+        return
+      }
       arrayOfFiles.push(join(__dirname, dirPath, "/", file));
     }
   })
@@ -19,18 +27,39 @@ function getAllFiles(dirPath, arrayOfFiles) {
   return arrayOfFiles
 }
 
-async function JPG(inputPath) {
+async function handleImage(inputPath) {
+
+  if (!isImage(inputPath)) {
+    return
+  }
+  const ext = extname(inputPath);
   const imageFileName = basename(inputPath);
 
+
   await sharp(inputPath)
-    .jpeg({ mozjpeg: true })
+    .jpeg({ 
+        mozjpeg: true,
+        quality: 60,
+    })
+    .png({
+      quality: 60,
+      compressionLevel: 9,
+      effort: 10,
+    })
+    .webp({
+      quality: 70,
+    })
+    .avif({
+      quality: 60,
+      chromaSubsampling: '4:2:0',
+      effort: 6
+    })
     .toFile(__dirname + outputDir + '/' + imageFileName, (err, info) => {
       if (err) {
         console.error({err})
       }
-      console.error({info})
     });
 }
 
-const allFiles = getAllFiles(inputDir);
-allFiles.forEach(image => JPG(image));
+const allFiles = getAllImageFiles(inputDir);
+allFiles.forEach(image => handleImage(image));
