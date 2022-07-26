@@ -9,7 +9,7 @@ const outputs = Object.freeze({
   png: ['png', 'webp', 'avif']
 });
 
-function inspectImage(file) {
+function inspectFile(file) {
   const extName = extname(file);
   const isImage = possibleFormats.includes(extName);
   return { isImage, extName }
@@ -23,7 +23,7 @@ function getAllImageFiles(dirPath, arrayOfFiles) {
     if (statSync(dirPath + "/" + file).isDirectory()) {
       arrayOfFiles = getAllImageFiles(dirPath + "/" + file, arrayOfFiles);
     } else {
-      if (!inspectImage(file).isImage) {
+      if (!inspectFile(file).isImage) {
         return
       }
       arrayOfFiles.push(join(__dirname, dirPath, "/", file));
@@ -33,14 +33,14 @@ function getAllImageFiles(dirPath, arrayOfFiles) {
 }
 
 async function handleImage(inputPath) {
-    const relativeOutputPath = relative(__dirname, inputPath);
+
+  const relativeOutputPath = relative(__dirname, inputPath);
   const parsedPath = relativeOutputPath.split(sep)
   parsedPath[0] = outputDir;
   const finalOutputPath = parsedPath.join(sep);
   const finalDirName = dirname(finalOutputPath);
-  const fileDetails = inspectImage(inputPath);
+  const fileDetails = inspectFile(inputPath);
   const outputDirName = __dirname + '/' + finalDirName;
-
 
   if (!fileDetails.isImage) {
     return
@@ -49,7 +49,6 @@ async function handleImage(inputPath) {
   if (!existsSync(outputDirName)){
     mkdirSync(outputDirName);
   }
-
 
   const imageBaseName = basename(inputPath, fileDetails.extName);
   const outputType = fileDetails.extName === '.jpg' || fileDetails.extName === '.jpeg' ? 'jpeg' :  fileDetails.extName === '.png' ? 'png' : null;
