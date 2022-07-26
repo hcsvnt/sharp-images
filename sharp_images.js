@@ -52,21 +52,21 @@ async function handleImage(inputPath) {
 
   const imageBaseName = basename(inputPath, fileDetails.extName);
   const outputType = fileDetails.extName === '.jpg' || fileDetails.extName === '.jpeg' ? 'jpeg' :  fileDetails.extName === '.png' ? 'png' : null;
-  
+
   if (!outputType) {
-    return 
+    return
   }
 
   const outputsByExtType = outputs[outputType];
 
   outputsByExtType.forEach(async (ext) => {
   const imageOutputPath = __dirname + '/' + finalDirName + '/' + imageBaseName + '.' + ext;
-  
+
 
   try {
     await sharp(inputPath)
       .toFormat(outputType)
-      .jpeg({ 
+      .jpeg({
           mozjpeg: true,
           quality: 60,
       })
@@ -94,8 +94,9 @@ async function handleImage(inputPath) {
 
 
   })
-  
+
 }
 
 const allFiles = getAllImageFiles('./' + inputDir);
 allFiles.forEach(image => handleImage(image));
+// console.log('finished')
