@@ -8,3 +8,4 @@ ___
 - [x] takes files from 'input' folder and it's subfolders
 - [ ] add other filetypes
 - [ ] add cleaning
+___
