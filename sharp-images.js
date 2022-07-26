@@ -32,13 +32,15 @@ const getPaths = (dirPath, imagePaths) => {
 }
 
 
-const jpg = (filePath, outputPath) => {
-    sharp(filePath)
+const jpg = async(filePath, outputPath) => {
+    const image = await sharp(filePath)
         .jpeg({
             mozjpeg: true,
             quality: 60,
         })
         .toFile(outputPath, (error, info) => console.log(info))
+        // .stats()
+        // .then(stats => console.log(stats))
 }
 
 const png = (filePath, outputPath) => {
@@ -75,8 +77,8 @@ const avif = (filePath, extension, outputPath) => {
 function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
     jpg(filePath, outputPath);
-    webp(filePath, '.jpg', outputPath);
-    avif(filePath, '.jpg', outputPath);
+    // webp(filePath, '.jpg', outputPath);
+    // avif(filePath, '.jpg', outputPath);
 }
 
 
@@ -91,23 +93,23 @@ function runPNG(filePath) {
 const pathsToProcess = getPaths(inputDir);
 
 
-function processImages(filePaths) {
-    filePaths.forEach(filePath => {
+async function processImages(filePaths) {
+    await filePaths.forEach(filePath => {
         const extension = path.extname(filePath)
 
         if (extension === '.jpg') {
             runJPG(filePath);
         } else {
-            runPNG(filePath);
+            // runPNG(filePath);
         }
     })
 }
 
 // processImages(pathsToProcess);
 
-async function imagesSharp(paths) {
-    await processImages(paths);
+function imagesSharp(paths) {
+    processImages(paths)
     console.log('finished processing images!')
 }
 
-imagesSharp(pathsToProcess);
+imagesSharp(pathsToProcess)
