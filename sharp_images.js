@@ -42,15 +42,15 @@ async function handleImage(inputPath) {
   const finalOutputPath = parsedPath.join(sep);
   const finalDirName = dirname(finalOutputPath);
   const fileDetails = inspectImage(inputPath);
-  const asdf = __dirname + '/' + finalDirName;
+  const outputDirName = __dirname + '/' + finalDirName;
 
 
   if (!fileDetails.isImage) {
     return
   }
 
-  if (!existsSync(asdf)){
-    mkdirSync(asdf);
+  if (!existsSync(outputDirName)){
+    mkdirSync(outputDirName);
   }
 
 
