@@ -56,11 +56,25 @@ async function runJPG(filePath) {
 
 async function processImages(filePaths) {
     const startTime = Date.now();
-    for (const filePath of filePaths) await runJPG(filePath);
+    for (const filePath of filePaths) await runJPG('./image.jpg');
     const endTime = Date.now();
     return endTime - startTime;
 }
 
+function makeSafe(fn, errorHandler) {
+    return function() {
+      fn().catch(errorHandler);
+    }
+}
+
+function handleError(error) {
+    console.log(error);
+}
 
 const pathsToProcess = getPaths(inputDir);
-processImages(pathsToProcess).then((time) => console.log(`all images processed in ${time}ms`))
+const withTimer = async () => processImages(pathsToProcess).then((time) => console.log(`all images processed in ${time}ms`))
+
+const safeImages = makeSafe(withTimer, handleError);
+
+// withTimer();
+safeImages();
