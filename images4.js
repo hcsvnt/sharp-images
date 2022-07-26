@@ -51,16 +51,16 @@ const png = (filePath, outputPath) => {
         .toFile(outputPath, (error, info) => console.log(info))
 }
 
-const webp = (filePath, format, outputPath) => {
+const webp = (filePath, extension, outputPath) => {
     sharp(filePath)
         .toFormat('webp')
         .webp({
             quality: 70,
         })
-        .toFile(outputPath.replace(format, 'webp'), (error, info) => console.log(info))
+        .toFile(outputPath.replace(extension, '.webp'), (error, info) => console.log(info))
 }
 
-const avif = (filePath, format, outputPath) => {
+const avif = (filePath, extension, outputPath) => {
     sharp(filePath)
         .toFormat('avif')
         .avif({
@@ -68,34 +68,32 @@ const avif = (filePath, format, outputPath) => {
             chromaSubsampling: '4:2:0',
             effort: 7
         })
-        .toFile(outputPath.replace(format, 'avif'), (error, info) => console.log(info))
+        .toFile(outputPath.replace(extension, '.avif'), (error, info) => console.log(info))
 }
 
 
 function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
     jpg(filePath, outputPath);
-    webp(filePath, 'jpg', outputPath);
-    avif(filePath, 'jpg', outputPath);
+    webp(filePath, '.jpg', outputPath);
+    avif(filePath, '.jpg', outputPath);
 }
 
 
 function runPNG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
     png(filePath, outputPath);
-    webp(filePath, 'png', outputPath);
-    avif(filePath, 'png', outputPath);
+    webp(filePath, '.png', outputPath);
+    avif(filePath, '.png', outputPath);
 }
 
 
 const pathsToProcess = getPaths(inputDir);
 
 
-async function processImages(filePaths) {
+function processImages(filePaths) {
     filePaths.forEach(filePath => {
-
         const extension = path.extname(filePath)
-        console.log('extension:', extension);
 
         if (extension === '.jpg') {
             runJPG(filePath);
@@ -105,4 +103,11 @@ async function processImages(filePaths) {
     })
 }
 
-processImages(pathsToProcess);
+// processImages(pathsToProcess);
+
+async function imagesSharp(paths) {
+    await processImages(paths);
+    console.log('finished processing images!')
+}
+
+imagesSharp(pathsToProcess);
