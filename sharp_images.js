@@ -32,9 +32,9 @@ async function handleImage(inputPath) {
   if (!isImage(inputPath)) {
     return
   }
-  const ext = extname(inputPath);
-  const imageFileName = basename(inputPath);
 
+  const imageBaseName = basename(inputPath);
+  const imageOutputPath = __dirname + outputDir + '/' + imageBaseName;
 
   await sharp(inputPath)
     .jpeg({ 
@@ -54,7 +54,7 @@ async function handleImage(inputPath) {
       chromaSubsampling: '4:2:0',
       effort: 6
     })
-    .toFile(__dirname + outputDir + '/' + imageFileName, (err, info) => {
+    .toFile(imageOutputPath, (err, info) => {
       if (err) {
         console.error({err})
       }
