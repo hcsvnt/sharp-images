@@ -16,16 +16,16 @@ const compressionSettings = {
     png: {
         quality: 60,
         compressionLevel: 8,
-        effort: 9
+        effort: 8
     },
     webp: {
         quality: 70,
-        effort: 6
+        effort: 5
     },
     avif : {
         quality: 60,
         chromaSubsampling: '4:2:0',
-        effort: 8
+        effort: 6
     }
 }
 
@@ -97,17 +97,29 @@ const avif = async(filePath, extension, outputPath) => {
 
 async function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    await jpg(filePath, outputPath);
-    await webp(filePath, '.jpg', outputPath);
-    await avif(filePath, '.jpg', outputPath);
+    // await jpg(filePath, outputPath);
+    // await webp(filePath, '.jpg', outputPath);
+    // await avif(filePath, '.jpg', outputPath);
+
+    return Promise.all([
+        jpg(filePath, outputPath),
+        webp(filePath, '.jpg', outputPath),
+        avif(filePath, '.jpg', outputPath)
+    ])
 }
 
 
 async function runPNG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    await png(filePath, outputPath);
-    await webp(filePath, '.png', outputPath);
-    await avif(filePath, '.png', outputPath);
+    // await png(filePath, outputPath);
+    // await webp(filePath, '.png', outputPath);
+    // await avif(filePath, '.png', out     putPath);
+
+    return Promise.all([
+        png(filePath, outputPath),
+        webp(filePath, '.png', outputPath),
+        avif(filePath, '.png', outputPath)
+    ])
 }
 
 
