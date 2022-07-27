@@ -112,38 +112,17 @@ async function runPNG(filePath) {
 
 
 async function processImages(filePaths) {
-    await filePaths.forEach(filePath => {
-        const extension = path.extname(filePath)
-
-        if (extension === '.jpg') {
-            runJPG(filePath);
-        } else {
-            runPNG(filePath);
-        }
-    })
-}
-
-
-const pathsToProcess = getPaths(inputDir);
-
-async function processImages(filePaths) {
     console.log('Starting image processing!')
     const startTime = Date.now();
-    // for (const filePath of filePaths) await runJPG(filePath);
     for (const filePath of filePaths) {
         const extension = path.extname(filePath)
-        if (extension === '.jpg') {
-            await runJPG(filePath);
-        } else {
-            await runPNG(filePath);
-        }
+        if (extension === '.jpg') await runJPG(filePath)
+        else await runPNG(filePath)
     }
     const endTime = Date.now();
     return endTime - startTime;
 }
 
 
-// W/O error handling
-// processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`));
-// W error handling
+const pathsToProcess = getPaths(inputDir);
 handleErrorHOF(processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`)), logError)
