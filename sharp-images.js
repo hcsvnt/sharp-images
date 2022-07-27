@@ -33,64 +33,64 @@ const getPaths = (dirPath, imagePaths) => {
 
 
 const jpg = async(filePath, outputPath) => {
-    const image = await sharp(filePath)
+    const startTime = Date.now();
+    await sharp(filePath)
         .jpeg({
             mozjpeg: true,
             quality: 60,
         })
-        .toFile(outputPath, (error, info) => console.log(info))
-        // .stats()
-        // .then(stats => console.log(stats))
+        .toFile(outputPath)
+        .then(() => {
+            const endTime = Date.now();
+            console.log(`${filePath} processed in ${endTime - startTime}ms`);
+        })
 }
 
-const png = (filePath, outputPath) => {
-    sharp(filePath)
+const png = async(filePath, outputPath) => {
+    await sharp(filePath)
         .png({
             quality: 60,
             compressionLevel: 9,
             effort: 10,
         })
-        .toFile(outputPath, (error, info) => console.log(info))
+        .toFile(outputPath)
 }
 
-const webp = (filePath, extension, outputPath) => {
-    sharp(filePath)
+const webp = async(filePath, extension, outputPath) => {
+    await sharp(filePath)
         .toFormat('webp')
         .webp({
             quality: 70,
         })
-        .toFile(outputPath.replace(extension, '.webp'), (error, info) => console.log(info))
+        .toFile(outputPath.replace(extension, '.webp'))
 }
 
-const avif = (filePath, extension, outputPath) => {
-    sharp(filePath)
+const avif = async(filePath, extension, outputPath) => {
+    await sharp(filePath)
         .toFormat('avif')
         .avif({
             quality: 60,
             chromaSubsampling: '4:2:0',
             effort: 7
         })
-        .toFile(outputPath.replace(extension, '.avif'), (error, info) => console.log(info))
+        .toFile(outputPath.replace(extension, '.avif'))
 }
 
 
-function runJPG(filePath) {
+async function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    jpg(filePath, outputPath);
-    // webp(filePath, '.jpg', outputPath);
-    // avif(filePath, '.jpg', outputPath);
+    await jpg(filePath, outputPath);
+    await webp(filePath, '.jpg', outputPath);
+    await avif(filePath, '.jpg', outputPath);
 }
 
 
-function runPNG(filePath) {
+async function runPNG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    png(filePath, outputPath);
-    webp(filePath, '.png', outputPath);
-    avif(filePath, '.png', outputPath);
+    await png(filePath, outputPath);
+    await webp(filePath, '.png', outputPath);
+    await avif(filePath, '.png', outputPath);
 }
-
-
-const pathsToProcess = getPaths(inputDir);
 
 
 async function processImages(filePaths) {
@@ -100,16 +100,28 @@ async function processImages(filePaths) {
         if (extension === '.jpg') {
             runJPG(filePath);
         } else {
-            // runPNG(filePath);
+            runPNG(filePath);
         }
     })
 }
 
-// processImages(pathsToProcess);
 
-function imagesSharp(paths) {
-    processImages(paths)
-    console.log('finished processing images!')
+const pathsToProcess = getPaths(inputDir);
+
+async function processImages(filePaths) {
+    const startTime = Date.now();
+    // for (const filePath of filePaths) await runJPG(filePath);
+    for (const filePath of filePaths) {
+        const extension = path.extname(filePath)
+
+        if (extension === '.jpg') {
+            await runJPG(filePath);
+        } else {
+            await runPNG(filePath);
+        }
+    }
+    const endTime = Date.now();
+    return endTime - startTime;
 }
 
-imagesSharp(pathsToProcess)
+processImages(pathsToProcess).then((time) => console.log(`all images processed in ${time}ms`))
