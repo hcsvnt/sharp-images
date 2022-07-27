@@ -15,16 +15,17 @@ const compressionSettings = {
     },
     png: {
         quality: 60,
-        compressionLevel: 9,
-        effort: 10,
+        compressionLevel: 8,
+        effort: 9
     },
     webp: {
         quality: 70,
+        effort: 6
     },
     avif : {
         quality: 60,
         chromaSubsampling: '4:2:0',
-        effort: 7
+        effort: 8
     }
 }
 
@@ -131,7 +132,6 @@ async function processImages(filePaths) {
     // for (const filePath of filePaths) await runJPG(filePath);
     for (const filePath of filePaths) {
         const extension = path.extname(filePath)
-
         if (extension === '.jpg') {
             await runJPG(filePath);
         } else {
@@ -143,4 +143,7 @@ async function processImages(filePaths) {
 }
 
 
-processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`));
+// W/O error handling
+// processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`));
+// W error handling
+handleErrorHOF(processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`)), logError)
