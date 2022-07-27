@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const { readdirSync, statSync, mkdirSync, existsSync } = require('fs');
-const { join, basename, extname, relative, dirname, sep } = require('path')
-
+const { join, basename, extname, relative, dirname, sep } = require('path');
+const startTime = Date.now();
 const inputDir = 'input';
 const outputDir = 'output';
 const possibleFormats = ['.jpg', '.jpeg', '.png']
@@ -61,44 +61,39 @@ async function handleImage(inputPath) {
 
   const outputsByExtType = outputs[outputType];
 
-  outputsByExtType.forEach(async (ext) => {
-  const imageOutputPath = __dirname + '/' + finalDirName + '/' + imageBaseName + '.' + ext;
-
-
-  try {
-    await sharp(inputPath)
-      .toFormat(outputType)
-      .jpeg({
-          mozjpeg: true,
+  const images = outputsByExtType.map(async (ext) => {
+    const imageOutputPath = __dirname + '/' + finalDirName + '/' + imageBaseName + '.' + ext;
+    const img = await sharp(inputPath)
+        .toFormat(outputType)
+        .jpeg({
+            mozjpeg: true,
+            quality: 60,
+        })
+        .png({
           quality: 60,
-      })
-      .png({
-        quality: 60,
-        compressionLevel: 9,
-        effort: 10,
-      })
-      .webp({
-        quality: 70,
-      })
-      .avif({
-        quality: 60,
-        chromaSubsampling: '4:2:0',
-        effort: 6
-      })
-      .toFile(imageOutputPath, (err, info) => {
-        if (err) {
-          console.error({err})
-        }
-      });
-  } catch(e) {
-    console.error(e)
-  }
+          compressionLevel: 9,
+          effort: 10,
+        })
+        .webp({
+          quality: 70,
+        })
+        .avif({
+          quality: 60,
+          chromaSubsampling: '4:2:0',
+          effort: 6
+        })
+        .toFile(imageOutputPath);
 
-
+    return img
   })
-
+  const imagesPromise = Promise.all(images);
+  return imagesPromise
 }
 
 const allFiles = getAllImageFiles('./' + inputDir);
-allFiles.forEach(image => handleImage(image));
-// console.log('finished')
+const allImages = Promise.all(allFiles.map(image => handleImage(image)));
+
+allImages.then(() => {
+  const endTime = Date.now();
+  console.log(`tra la la, ding ding dong: ${endTime - startTime}`)
+})  
