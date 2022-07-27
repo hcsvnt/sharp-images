@@ -8,6 +8,36 @@ const outputDir = './output';
 const acceptedFormats = ['.jpg', '.png'];
 
 
+const compressionSettings = {
+    jpg : {
+        mozjpeg: true,
+        quality: 60,
+    },
+    png: {
+        quality: 60,
+        compressionLevel: 9,
+        effort: 10,
+    },
+    webp: {
+        quality: 70,
+    },
+    avif : {
+        quality: 60,
+        chromaSubsampling: '4:2:0',
+        effort: 7
+    }
+}
+
+
+const logError = (error) => console.log(error);
+
+function handleErrorHOF(fn, errorHandler) {
+    return function() {
+      fn().catch(errorHandler);
+    }
+}
+
+
 const getPaths = (dirPath, imagePaths) => {
 
     imagePaths = imagePaths || [];
@@ -33,46 +63,33 @@ const getPaths = (dirPath, imagePaths) => {
 
 
 const jpg = async(filePath, outputPath) => {
-    const startTime = Date.now();
+    // const startTime = Date.now();
     await sharp(filePath)
-        .jpeg({
-            mozjpeg: true,
-            quality: 60,
-        })
+        .jpeg(compressionSettings.jpg)
         .toFile(outputPath)
-        .then(() => {
-            const endTime = Date.now();
-            console.log(`${filePath} processed in ${endTime - startTime}ms`);
-        })
+        // .then(() => {
+        //     const endTime = Date.now();
+        //     console.log(`${filePath} processed in ${endTime - startTime}ms`);
+        // })
 }
 
 const png = async(filePath, outputPath) => {
     await sharp(filePath)
-        .png({
-            quality: 60,
-            compressionLevel: 9,
-            effort: 10,
-        })
+        .png(compressionSettings.png)
         .toFile(outputPath)
 }
 
 const webp = async(filePath, extension, outputPath) => {
     await sharp(filePath)
         .toFormat('webp')
-        .webp({
-            quality: 70,
-        })
+        .webp(compressionSettings.webp)
         .toFile(outputPath.replace(extension, '.webp'))
 }
 
 const avif = async(filePath, extension, outputPath) => {
     await sharp(filePath)
         .toFormat('avif')
-        .avif({
-            quality: 60,
-            chromaSubsampling: '4:2:0',
-            effort: 7
-        })
+        .avif(compressionSettings.avif)
         .toFile(outputPath.replace(extension, '.avif'))
 }
 
@@ -109,6 +126,7 @@ async function processImages(filePaths) {
 const pathsToProcess = getPaths(inputDir);
 
 async function processImages(filePaths) {
+    console.log('Starting image processing!')
     const startTime = Date.now();
     // for (const filePath of filePaths) await runJPG(filePath);
     for (const filePath of filePaths) {
@@ -124,4 +142,5 @@ async function processImages(filePaths) {
     return endTime - startTime;
 }
 
-processImages(pathsToProcess).then((time) => console.log(`all images processed in ${time}ms`))
+
+processImages(pathsToProcess).then((time) => console.log(`All images processed in ${time}ms`));
