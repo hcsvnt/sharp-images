@@ -64,14 +64,9 @@ const getPaths = (dirPath, imagePaths) => {
 
 
 const jpg = async(filePath, outputPath) => {
-    // const startTime = Date.now();
     await sharp(filePath)
         .jpeg(compressionSettings.jpg)
         .toFile(outputPath)
-        // .then(() => {
-        //     const endTime = Date.now();
-        //     console.log(`${filePath} processed in ${endTime - startTime}ms`);
-        // })
 }
 
 const png = async(filePath, outputPath) => {
@@ -97,10 +92,6 @@ const avif = async(filePath, extension, outputPath) => {
 
 async function runJPG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    // await jpg(filePath, outputPath);
-    // await webp(filePath, '.jpg', outputPath);
-    // await avif(filePath, '.jpg', outputPath);
-
     return Promise.all([
         jpg(filePath, outputPath),
         webp(filePath, '.jpg', outputPath),
@@ -111,10 +102,6 @@ async function runJPG(filePath) {
 
 async function runPNG(filePath) {
     const outputPath = filePath.replace(inputDir, outputDir);
-    // await png(filePath, outputPath);
-    // await webp(filePath, '.png', outputPath);
-    // await avif(filePath, '.png', out     putPath);
-
     return Promise.all([
         png(filePath, outputPath),
         webp(filePath, '.png', outputPath),
